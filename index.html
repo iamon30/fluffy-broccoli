@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AutoCAD Plotting & Plane Geometry Module</title>
+<style>
+:root{--ink:#243447;--acc:#b5532a;--blue:#2d5b86;--card:#fffaf0;--line:#d8cba8}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 'Segoe UI',system-ui,sans-serif;color:var(--ink);background:#f6efdc;
+background-image:linear-gradient(rgba(45,91,134,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(45,91,134,.09) 1px,transparent 1px);background-size:24px 24px;-webkit-user-select:none;user-select:none}
+header{padding:22px 16px;text-align:center;border-bottom:3px double var(--blue)}
+h1{margin:0;font:700 24px 'Courier New',monospace;letter-spacing:1px;color:var(--blue)}
+header p{margin:4px 0 0;color:#6b5f45}
+main{max-width:920px;margin:18px auto;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:6px;padding:16px;margin-bottom:14px;box-shadow:0 2px 6px rgba(80,60,20,.08)}
+h2{margin:0 0 8px;font:700 18px 'Courier New',monospace;color:var(--acc)}
+label{display:block;font-weight:600;margin:8px 0 3px}
+input,select{width:100%;padding:9px;border:1px solid #bfae80;border-radius:4px;background:#fff;font:inherit;-webkit-user-select:text;user-select:text}
+.row{display:grid;grid-template-columns:2fr 2fr 70px 1fr;gap:10px}
+@media(max-width:640px){.row{grid-template-columns:1fr 1fr}}
+button,.btn{background:var(--blue);color:#fff;border:0;border-radius:4px;padding:9px 14px;font:600 14px inherit;cursor:pointer;text-decoration:none;display:inline-block;margin:3px 3px 0 0}
+button.alt,.btn.alt{background:var(--acc)}button.ghost{background:#e7dcb8;color:var(--ink)}button:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.tag{font:12px 'Courier New',monospace;color:#7a6c4a}.bar{height:6px;background:#e7dcb8;border-radius:3px;margin:6px 0}.bar i{display:block;height:100%;background:var(--blue);border-radius:3px}
+.q{border-bottom:1px dashed var(--line);padding:10px 0}.q label{font-weight:400;display:flex;gap:8px;margin:3px 0;cursor:pointer;align-items:center}.q input{width:auto}
+ul.rules{margin:6px 0;padding-left:20px}.err{color:#b3261e;font-weight:600}
+table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left}
+.hide{display:none}.wm{position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;font:700 54px 'Courier New',monospace;color:rgba(45,91,134,.07);transform:rotate(-28deg);white-space:nowrap;z-index:5}
+#cover{position:fixed;inset:0;background:#f6efdc;z-index:99;display:none;align-items:center;justify-content:center;font-weight:700}
+@media print{body{display:none}}
+</style></head><body oncontextmenu="return false">
+<div class="wm">RAYMOND D. ENTAL</div><div id="cover">Screen capture blocked</div>
+<header><h1>📐 PLOTTING, PRINTING & PLANE GEOMETRY</h1><p>AutoCAD Mechanical Drafting · Interactive Module &amp; Quiz Competition</p></header>
+<main>
+
+<section id="s-info" class="card">
+<h2>Student Information</h2>
+<div class="row"><div><label>Last name</label><input id="ln"></div><div><label>First name</label><input id="fn"></div><div><label>M.I.</label><input id="mi" maxlength="1"></div><div><label>Section</label><select id="sec"><option value="">▼ Select</option></select></div></div>
+<label>Valid email address</label><input id="em" type="email" placeholder="name@gmail.com">
+<h2 style="margin-top:16px">Rules, Consent &amp; Competition</h2>
+<ul class="rules">
+<li><b>Attempts:</b> maximum of <b>3 attempts per topic</b>. An attempt is counted the moment you press Start — refreshing or closing the page does not give it back.</li>
+<li><b>Tab lock:</b> leaving this tab or window (switching tabs, apps, split screen) <b>closes the quiz</b>, voids it with a score of 0 and uses an attempt.</li>
+<li><b>Unique items:</b> your 10 questions and numbers are generated for you alone — answers from classmates will not match.</li>
+<li><b>Honesty:</b> no screenshots, no sharing questions, no AI tools or other people helping. Violations may be disqualified from the ranking and prizes.</li>
+<li><b>Records:</b> your name, section, email, start/end timestamps, score and answer key are saved to the instructor's Google Sheet. A result picture downloads automatically after every quiz — keep it as proof.</li>
+<li><b>Ranking (optional):</b> your <b>total = sum of your best score in each topic</b> (max 120). <b>Section rank</b> = average of the top 5 totals in the section (at least 3 joined students needed). Ties: higher total, then fewer attempts. Only joined students appear; names show on the board.</li>
+<li><b>Prizes:</b> Top Section ₱500 · Top 10 students (any section): 1st ₱150 · 2nd ₱100 · 3rd ₱10 · 4th–10th ₱20 each. The instructor's decision is final; the Google Sheet is the official record. One account per email.</li>
+</ul>
+<label style="font-weight:400"><input type="checkbox" id="c1" style="width:auto"> I have read the rules and <b>consent</b> to my data being recorded and to automatic voiding if I leave the tab.</label>
+<label style="font-weight:400"><input type="checkbox" id="c2" style="width:auto"> <b>Join the ranking competition</b> (show my name and section on the leaderboards).</label>
+<p id="ierr" class="err"></p><button onclick="saveInfo()">Continue ▶</button>
+<button class="ghost" onclick="adminLogin()">Admin</button>
+</section>
+
+<section id="s-menu" class="hide">
+<div class="card"><h2>Welcome, <span id="who"></span></h2><div id="whoSub" class="tag"></div>
+<button class="ghost" onclick="show('s-info')">✎ Edit info</button><button class="alt" onclick="showBoard()">🏆 Leaderboard</button><span id="adm" class="tag"></span></div>
+<div class="card" style="border-left-color:var(--acc)">▶ <b>Videos are optional.</b> The Videos button opens in a new tab and is safe to use any time <b>before you press Start quiz</b> — it does not use an attempt or affect your scores. Once a quiz is started, switching tabs closes it.</div>
+<h2>Part 1 — Plotting, Printing &amp; Digital Documentation</h2><div id="g1" class="grid"></div>
+<h2 style="margin-top:18px">Part 2 — Fundamentals of Plane Geometry</h2><div id="g2" class="grid"></div>
+</section>
+
+<section id="s-quiz" class="hide card"><h2 id="qt"></h2><div class="tag" id="qm"></div><div id="qb"></div>
+<p id="qerr" class="err"></p><button onclick="submitQuiz()">Submit answers</button></section>
+
+<section id="s-res" class="hide card"><h2>Result</h2><div id="rb"></div><img id="rimg" style="max-width:100%;border:1px solid var(--line);margin-top:8px">
+<br><button onclick="show('s-menu')">Back to topics</button><button class="alt" onclick="dl()">⬇ Download picture again</button></section>
+
+<section id="s-board" class="hide card"><h2>🏆 Leaderboard</h2><div id="bb">Loading…</div><button onclick="show('s-menu')">Back</button><button class="ghost" onclick="showBoard()">Refresh</button></section>
+</main>
+<script>
+/* ============ PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BETWEEN THE QUOTES BELOW ============ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymXLrW2ulRU4ANdjVzTHD4CPc_dFKi9MtfTw1-9l9zFnABRSxzYKKfYEXD_gAQ16Xe/exec";   // <<<<<<<<<<<<<<<< PASTE HERE (ends with /exec)
+/* ================================================================================================ */
+const ADMIN_PW="RDDE_2026",MAX=3,SECS=["4A","4B","4C","4D","4E","4F","4H","4I","4J"];
+const PRIZE=["₱150","₱100","₱10","₱20","₱20","₱20","₱20","₱20","₱20","₱20"];
+const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const L="ABCD";let S={info:null,admin:false,cur:null,active:false,srv:{}};
+SECS.forEach(s=>$('sec').add(new Option(s,s)));
+function show(id){["s-info","s-menu","s-quiz","s-res","s-board"].forEach(x=>$(x).classList.toggle("hide",x!=id));if(id=="s-menu")menu();scrollTo(0,0)}
+
+/* ---------- topics ---------- */
+const YT=q=>"https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+const T=[
+{id:"P1",g:1,t:"Layout Space & Paper Space",v:"AutoCAD model space vs paper space layout tutorial",b:[
+"Which space is used to compose sheet layouts for plotting?|Paper space (Layout tab)|Model space only|The Block Editor|The Xref Manager",
+"The part itself should be drawn full size (1:1) in|Model space|Paper space|The title block|A viewport frame",
+"Paper size, plotter and plot area for a layout are set in|Page Setup Manager|Units dialog|Layer Properties|Dynamic Input",
+"Making a viewport active from a layout lets you|Edit model geometry through the viewport|Change the sheet size|Delete the layout|Rename the template",
+"A single layout can contain|Several viewports at different scales|Only one viewport|Only text|No geometry at all",
+"Why use one layout per sheet?|Each sheet gets its own paper size, title block and viewports|It makes the file zero size|It removes model space|It auto-dimensions parts"]},
+{id:"P2",g:1,t:"Title Blocks & Drawing Templates",v:"AutoCAD title block drawing template dwt tutorial",b:[
+"A drawing template file has the extension|.dwt|.pdf|.ctb|.bak",
+"A title block normally contains|Title, drawing number, scale, drafter, date, revision|Only the company logo|Only dimensions|Only plot styles",
+"Fields/attributes in a title block can|Update title, date and sheet number automatically|Hide layers|Change lineweights globally|Rotate viewports",
+"Best place to store layers, text styles and dimension styles for reuse|A drawing template (.dwt)|Re-creating them every drawing|The plotter file|A PDF",
+"The title block is drawn at|1:1 on the paper-space sheet|Scaled in model space|A random size|A hidden model layer",
+"An ISO A3 sheet measures|420 × 297 mm|297 × 210 mm|594 × 420 mm|841 × 594 mm"]},
+{id:"P3",g:1,t:"Viewports & Annotation Scaling",v:"AutoCAD viewports annotative scale layout tutorial",b:[
+"The MVIEW command creates|Viewports in a layout|Solid primitives|Hatch patterns|Plot styles",
+"Annotative objects size themselves according to|The viewport's annotation scale|The paper size only|Layer color|Plotter DPI",
+"Locking a viewport prevents|Accidental pan/zoom changing its scale|Plotting|Layer creation|Saving",
+"To plot at 1:50 the viewport scale must be|1:50 (1 paper unit = 50 model units)|50:1|1:5|5:1",
+"Annotative text set to 3 mm paper height plots|3 mm tall at every viewport scale|3 mm × scale factor|Invisible|At model size",
+"Viewport boundary lines should be placed on|A layer set to No Plot|A plotted red layer|Model space|The title block layer"]},
+{id:"P4",g:1,t:"Plot Styles & Printing Configuration",v:"AutoCAD plot style CTB lineweight plot settings tutorial",b:[
+"A CTB plot style table assigns properties by|Object color|Layer name only|Block name|Text content",
+"An STB plot style table uses|Named plot styles|ACI colors only|Viewport count|DPI",
+"Lineweight in plotting controls|Printed line thickness (mm)|Layer order|Zoom level|Paper size",
+"Monochrome.ctb prints|All colors as black|Only red lines|Nothing|Only hatches",
+"Plot preview is used to|Check scale, area and lineweights before printing|Edit geometry|Change units|Create xrefs",
+"The 'Window' plot area prints|The rectangular area you pick|Everything in model space|Only selected layers|Only the title block"]},
+{id:"P5",g:1,t:"PDF Generation & Digital Submission",v:"AutoCAD plot to PDF publish multi-sheet DWG To PDF tutorial",b:[
+"A PDF is produced from AutoCAD using|DWG To PDF.pc3 / Export to PDF|Notepad|PURGE|XREF",
+"Vector PDF output is preferred because|Lines stay sharp and text stays searchable at any zoom|It converts to DWG|It deletes layers|It removes text",
+"Good digital file naming|Consistent code like Project_Sheet_Rev|Random names|Symbols only|No revision shown",
+"Before submitting you should|Purge, audit and check every sheet of the PDF set|Delete the DWG|Flatten to raster|Remove the title block",
+"A multi-sheet PDF set is made with|PUBLISH|EXPLODE|EXTRUDE|REVOLVE",
+"ETRANSMIT is used to|Package a DWG with its xrefs and fonts|Plot at scale|Rename layers|Create viewports"]},
+{id:"P6",g:1,t:"Electronic Documentation & Paperless Workflows",v:"paperless workflow digital documentation engineering drawings cloud",b:[
+"A paperless workflow mainly reduces|Printing, paper waste and storage|Drawing accuracy|Layer count|Command count",
+"Cloud storage with version control ensures|Everyone works from the latest revision|Drawings are hidden|History is deleted|More printing",
+"Digital markup tools allow|Comments on PDFs without printing|Plotting at 1:1|Extruding|Block creation",
+"Proper archiving means|DWG + PDF in organized, backed-up folders|One copy on the desktop|Print then shred|Rename all layers",
+"Electronic signatures replace|Wet-ink sign-offs on printed sheets|Title blocks|Layers|Scale bars",
+"A sustainable habit when printing is unavoidable|Print only needed sheets, double-sided, recycled paper|Print every revision on A0|Print and discard drafts|Always 600 dpi color"]},
+{id:"A",g:2,t:"A · Angular Units: Degrees, Minutes, Seconds",v:"fundamentals of plane geometry degrees minutes seconds convert decimal DMS"},
+{id:"B",g:2,t:"B · Arithmetic with DMS",v:"adding subtracting multiplying dividing degrees minutes seconds angles"},
+{id:"C",g:2,t:"C · Protractors, Complements & Supplements",v:"vernier bevel protractor reading complementary supplementary angles"},
+{id:"D",g:2,t:"D · Angle Types & Angle Principles",v:"angle types vertical alternate interior corresponding angles parallel lines perpendicular sides"},
+{id:"E",g:2,t:"E · Triangles & Polygons",v:"triangles similar congruent Pythagorean theorem interior angles of polygon"},
+{id:"F",g:2,t:"F · Circles & Geometric Constructions",v:"circle arc length inscribed angle tangent geometric constructions bisector"}];
+
+/* ---------- question engine (seeded per student) ---------- */
+function hash(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function build(t,seed){
+const r=rng(seed),R=(a,b)=>a+Math.floor(r()*(b-a+1)),P=a=>a[R(0,a.length-1)];
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const mc=(q,c,w)=>{c=String(c);w=[...new Set(w.map(String))].filter(x=>x!=c).slice(0,3);const o=sh([c,...w]);return{q,o,a:o.indexOf(c)}};
+const S3=(d,m=0,s=0)=>d*3600+m*60+s,F=x=>{x=Math.round(x);return Math.floor(x/3600)+"°"+Math.floor(x%3600/60)+"′"+(x%60?x%60+"″":"")};
+const mask=t.g==1?null:t.id;
+if(t.g==1){ // concept items + numeric plotting items
+ const bank=sh(t.b).slice(0,6).map(x=>{x=x.split("|");return mc(x[0],x[1],x.slice(2))});
+ const A=[()=>{const N=P([20,25,50,100]),p=R(12,90);return mc(`A part is ${p*N} mm long in model space. In a viewport at 1:${N}, how long (mm) does it plot on the sheet?`,p,[p*N,p+N,p*2])},
+ ()=>{const h=P([2.5,3.5,5,7]),N=P([20,50,100]);return mc(`Text must plot ${h} mm tall in a 1:${N} viewport. Required model-space text height (mm)?`,+(h*N).toFixed(1),[+(h/N).toFixed(3),+(h+N).toFixed(1),+(h*N*2).toFixed(1)])},
+ ()=>{const [n,W,H]=P([["A4",297,210],["A3",420,297],["A2",594,420],["A1",841,594]]),m=R(5,20);return mc(`An ${n} sheet (${W} × ${H} mm) has a ${m} mm margin on every side. Printable width (mm)?`,W-2*m,[W-m,W+2*m,H-2*m])},
+ ()=>{const d=P([150,200,300,600]),w=P([11,17,22,34]);return mc(`A ${w}-inch wide sheet is exported to a raster image at ${d} dpi. Width in pixels?`,d*w,[d*w/2,d+w,d*w*2])}];
+ return sh(bank.concat(sh(A.map(f=>f()))))}
+const F4={
+A:[()=>{const x=R(12,78)+R(1000,9999)/10000,s=x*3600;return mc(`Convert ${x.toFixed(4)}° to degrees, minutes, seconds.`,F(s),[F(s+60),F(s-60),F(s+10)])},
+()=>{const D=R(12,78),M=R(1,59),s=R(1,59);return mc(`Convert ${D}°${M}′${s}″ to decimal degrees (4 places).`,(D+M/60+s/3600).toFixed(4),[(D+M/100+s/1e4).toFixed(4),(D+M/60+s/100).toFixed(4),(D+(M+s)/100).toFixed(4)])},
+()=>{const x=R(12,170),m=R(1,59);return mc(`How many minutes are in ${x}°${m}′ in total?`,x*60+m,[x*100+m,x*60+m*60,x*3600+m])},
+()=>{const m=R(5,58),f=R(1,9);return mc(`Express ${m}.${f}′ as minutes and seconds.`,m+"′"+f*6+"″",[m+"′"+f+"″",m+"′"+f*10+"″",m+1+"′"+f*6+"″"])}],
+B:[()=>{const a=[R(20,80),R(1,59)],b=[R(20,80),R(1,59)],s=S3(...a)+S3(...b);return mc(`Add ${a[0]}°${a[1]}′ + ${b[0]}°${b[1]}′`,F(s),[a[0]+b[0]+"°"+(a[1]+b[1])+"′",F(s+60),F(s-3600)])},
+()=>{const a=[R(60,120),R(1,29)],b=[R(20,59),R(30,59)],s=S3(...a)-S3(...b);return mc(`Subtract ${a[0]}°${a[1]}′ − ${b[0]}°${b[1]}′`,F(s),[a[0]-b[0]+"°"+Math.abs(a[1]-b[1])+"′",F(s+3600),F(s-60)])},
+()=>{const k=R(2,6),a=[R(10,40),R(1,59)],s=k*S3(...a);return mc(`Multiply ${k}(${a[0]}°${a[1]}′)`,F(s),[k*a[0]+"°"+a[1]+"′",F(s+60),F(s-3600)])},
+()=>{const k=R(2,5),b=S3(R(10,60),R(1,59),R(1,59));return mc(`Divide ${F(b*k)} ÷ ${k}`,F(b),[F(b+60),F(b-60),F(b+10)])}],
+C:[()=>{const x=R(10,80);return mc(`The complement of ${x}° is`,90-x+"°",[180-x+"°",x+"°",90+x+"°"])},
+()=>{const x=R(20,160);return mc(`The supplement of ${x}° is`,180-x+"°",[360-x+"°",Math.abs(90-x)+"°",x+"°"])},
+()=>{const d=R(10,80),n=R(1,11);return mc(`Vernier bevel protractor: main scale zero passed ${d}°, and the ${n}th vernier line aligns (1 division = 5′). Reading?`,d+"°"+n*5+"′",[d+"°"+n+"′",d+"°"+n*10+"′",d+"°"+(n*5+30)+"′"])},
+()=>{const D=R(10,80),M=R(1,59),s=5400-S3(D,M);return mc(`Complement of ${D}°${M}′`,F(s),[F(s+3600),F(s-60),F(10800-S3(D,M))])}],
+D:[()=>{const x=P([R(10,85),90,R(95,175),180,R(185,355)]),n=["acute","right","obtuse","straight","reflex"],c=x<90?0:x==90?1:x<180?2:x==180?3:4;return mc(`An angle of ${x}° is`,n[c],n.filter((_,i)=>i!=c))},
+()=>{const x=R(30,150);return mc(`Two lines intersect; one angle measures ${x}°. An adjacent (linear-pair) angle is`,180-x+"°",[x+"°",360-x+"°",Math.abs(90-x)+"°"])},
+()=>{const x=R(30,80),k=R(0,1);return mc(`Parallel lines cut by a transversal; one angle is ${x}°. Its ${k?"co-interior (same-side interior)":"corresponding"} angle is`,k?180-x+"°":x+"°",[k?x+"°":180-x+"°",2*x+"°",90+x+"°"])},
+()=>{const x=R(30,80);return mc(`Angles A and B have mutually perpendicular sides. A = ${x}° (acute), B is obtuse. B =`,180-x+"°",[x+"°",90-x+"°",90+x+"°"])}],
+E:[()=>{const a=R(30,80),b=R(30,80);return mc(`Two angles of a triangle are ${a}° and ${b}°. The third is`,180-a-b+"°",[180-a+"°",a+b+"°",360-a-b+"°"])},
+()=>{const [a,b,c]=P([[3,4,5],[5,12,13],[8,15,17],[7,24,25]]),k=R(1,5);return R(0,1)?mc(`Legs of a right triangle are ${a*k} and ${b*k}. Hypotenuse =`,c*k,[(a+b)*k,c*k+k,b*k]):mc(`A right triangle has hypotenuse ${c*k} and one leg ${a*k}. Other leg =`,b*k,[c*k-a*k,c*k,(a+c)*k])},
+()=>{const n=R(5,14);return mc(`Sum of interior angles of a ${n}-sided polygon`,(n-2)*180+"°",[n*180+"°",(n-1)*180+"°",(n-2)*360+"°"])},
+()=>{const a=R(3,9),k=R(2,4),b=R(3,9);return mc(`ΔABC ~ ΔDEF. AB = ${a}, DE = ${a*k}, BC = ${b}. EF =`,b*k,[b+a*k-a,a*k,b*k+k])}],
+F:[()=>{const d=R(5,40);return mc(`Circumference of a circle with diameter ${d} (π = 3.1416, 2 decimals)`,(Math.PI*d).toFixed(2),[(2*Math.PI*d).toFixed(2),(Math.PI*d*d/4).toFixed(2),(Math.PI*d/2).toFixed(2)])},
+()=>{const r=R(5,20),q=P([30,45,60,90,120,150]),f=x=>x.toFixed(2);return mc(`Arc length of a ${q}° arc on a circle of radius ${r}`,f(q/360*2*Math.PI*r),[f(q/360*Math.PI*r),f(q/360*Math.PI*r*r),f(q/180*Math.PI*r*2)])},
+()=>{const a=2*R(10,40),b=2*R(41,80),k=R(0,3);return[mc(`An inscribed angle intercepts an arc of ${a}°. Angle =`,a/2+"°",[a+"°",2*a+"°",180-a+"°"]),mc(`A central angle intercepts an arc of ${a}°. Angle =`,a+"°",[a/2+"°",2*a+"°",180-a+"°"]),mc(`Two chords cross inside a circle, intercepting arcs ${a}° and ${b}°. Angle =`,(a+b)/2+"°",[(b-a)/2+"°",a+b+"°",b/2+"°"]),mc(`Two secants meet outside a circle, intercepting arcs ${b}° and ${a}°. Angle =`,(b-a)/2+"°",[(a+b)/2+"°",b-a+"°",a/2+"°"])][k]},
+()=>{const k=R(1,6);return mc(`A tangent is drawn from P, ${5*k} units from the center of a circle of radius ${3*k}. Tangent length =`,4*k,[5*k,2*k,8*k])}]}[mask];
+const off=R(0,3);return Array.from({length:10},(_,i)=>F4[(i+off)%4]())}
+
+/* ---------- info ---------- */
+function saveInfo(){const v=i=>$(i).value.trim(),e=[];
+if(!/^[A-Za-zÑñ .'-]{2,}$/.test(v('ln')))e.push("last name");if(!/^[A-Za-zÑñ .'-]{2,}$/.test(v('fn')))e.push("first name");
+if(!/^[A-Za-z]$/.test(v('mi')))e.push("middle initial");if(!$('sec').value)e.push("section");
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('em')))e.push("valid email");
+if(e.length)return $('ierr').textContent="Please fix: "+e.join(", ");
+if(!$('c1').checked)return $('ierr').textContent="You must agree to the rules and consent to continue.";
+$('ierr').textContent="";S.info={last:v('ln').toUpperCase(),first:v('fn').toUpperCase(),mi:v('mi').toUpperCase(),section:$('sec').value,email:v('em').toLowerCase(),ranking:$('c2').checked?"YES":"NO"};
+S.srv={};if(SCRIPT_URL)fetch(SCRIPT_URL+"?action=attempts&email="+encodeURIComponent(S.info.email)).then(r=>r.json()).then(j=>{S.srv=j;menu()}).catch(()=>{});show('s-menu')}
+const ak=t=>"att:"+S.info.email+":"+t,used=t=>Math.max(+localStorage.getItem(ak(t))||0,S.srv[t]||0),best=t=>+localStorage.getItem("best:"+S.info.email+":"+t)||0;
+function menu(){if(!S.info)return;const i=S.info;$('who').textContent=`${i.last}, ${i.first} ${i.mi}.`;$('whoSub').textContent=`Section ${i.section} · ${i.email} · Ranking: ${i.ranking=="YES"?"joined":"not joined"}`;$('adm').textContent=S.admin?"  ADMIN TEST MODE (not recorded, unlimited)":"";
+[1,2].forEach(g=>$('g'+g).innerHTML=T.filter(t=>t.g==g).map(t=>{const u=used(t.id);return`<div class="card"><b>${t.t}</b><div class="tag">Best: ${best(t.id)}/10 · Attempts: ${u}/${MAX}</div><div class="bar"><i style="width:${best(t.id)*10}%"></i></div>
+<a class="btn ghost" href="${YT(t.v)}" target="_blank" rel="noopener">▶ Videos</a><button onclick="start('${t.id}')" ${!S.admin&&u>=MAX?"disabled":""}>Start quiz</button></div>`}).join(""))}
+
+/* ---------- quiz ---------- */
+function post(o){if(!SCRIPT_URL||S.admin)return;fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o)}).catch(()=>{})}
+const stamp=d=>d.toLocaleString("en-PH",{timeZone:"Asia/Manila",hour12:true})+" (PH)";
+function start(id){const t=T.find(x=>x.id==id),n=used(id)+1;
+if(!S.admin&&n>MAX)return;if(!confirm(`Start "${t.t}"?\n\nAttempt ${n} of ${MAX}.\n\nLeaving this tab will CLOSE the quiz and void the attempt.`))return;
+if(!S.admin)localStorage.setItem(ak(id),n);const i=S.info;
+S.cur={t,n,items:build(t,hash([i.last,i.first,i.mi,i.email,id,n,"RDDE"].join("|"))),ans:[],start:new Date(),t0:Date.now()};S.active=true;
+post({...i,start:stamp(S.cur.start),end:"",topic:id,attempt:n,score:"",status:"STARTED",ranking:i.ranking,key:""});
+$('qt').textContent=t.t;$('qm').textContent=`Attempt ${n}/${MAX} · Started ${stamp(S.cur.start)} · Do NOT leave this tab`;$('qerr').textContent="";
+$('qb').innerHTML=S.cur.items.map((q,k)=>`<div class="q"><b>${k+1}. ${esc(q.q)}</b>${q.o.map((o,j)=>`<label><input type="radio" name="q${k}" value="${j}"> ${L[j]}. ${esc(o)}</label>`).join("")}</div>`).join("");show('s-quiz')}
+function leave(){if(S.active&&Date.now()-S.cur.t0>2000){S.active=false;finish(true)}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")leave()});
+document.addEventListener("keydown",e=>{if(e.key=="PrintScreen"||(e.ctrlKey&&["p","s","u"].includes(e.key.toLowerCase()))||e.key=="F12"){e.preventDefault();$('cover').style.display="flex";setTimeout(()=>$('cover').style.display="none",1500);try{navigator.clipboard.writeText("")}catch(_){}}});
+function submitQuiz(){const c=S.cur;const a=c.items.map((_,k)=>{const x=document.querySelector(`input[name=q${k}]:checked`);return x?+x.value:-1});
+if(a.includes(-1)){$('qerr').textContent="Please answer all 10 items.";return}
+c.ans=a;S.active=false;finish(false)}
+function finish(void_){const c=S.cur;c.end=new Date();
+if(void_){c.ans=c.items.map((_,k)=>{const x=document.querySelector(`input[name=q${k}]:checked`);return x?+x.value:-1})}
+c.status=void_?"VOID – LEFT TAB":"SUBMITTED";c.score=void_?0:c.items.reduce((s,q,k)=>s+(c.ans[k]==q.a?1:0),0);
+const key=c.items.map((q,k)=>`${k+1}:${c.ans[k]<0?"-":L[c.ans[k]]}/${L[q.a]}${c.ans[k]==q.a?"✓":"✗"}`).join(" ");
+if(!S.admin&&!void_&&c.score>best(c.t.id))localStorage.setItem("best:"+S.info.email+":"+c.t.id,c.score);
+post({...S.info,start:stamp(c.start),end:stamp(c.end),topic:c.t.id,attempt:c.n,score:c.score,status:c.status,ranking:S.info.ranking,key:"Student/Key → "+key});
+$('rb').innerHTML=`<b>${esc(c.t.t)}</b><br>Attempt ${c.n}/${MAX} · Score <b>${c.score}/10</b> · ${c.status}<br><span class="tag">${stamp(c.start)} → ${stamp(c.end)}</span>${void_?'<p class="err">You left the tab, so this attempt was closed and scored 0.</p>':""}`;
+draw(key);show('s-res')}
+
+/* ---------- result picture ---------- */
+let IMG="";
+function draw(key){const c=S.cur,i=S.info,cv=document.createElement("canvas"),W=980,H=620+c.items.length*52;cv.width=W;cv.height=H;const x=cv.getContext("2d");
+x.fillStyle="#f6efdc";x.fillRect(0,0,W,H);x.strokeStyle="rgba(45,91,134,.12)";for(let k=0;k<W;k+=24){x.beginPath();x.moveTo(k,0);x.lineTo(k,H);x.stroke()}for(let k=0;k<H;k+=24){x.beginPath();x.moveTo(0,k);x.lineTo(W,k);x.stroke()}
+x.strokeStyle="#2d5b86";x.lineWidth=4;x.strokeRect(12,12,W-24,H-24);
+const tx=(s,a,b,f="16px Segoe UI,Arial",col="#243447")=>{x.font=f;x.fillStyle=col;x.fillText(s,a,b)};
+tx("AUTOCAD PLOTTING & PLANE GEOMETRY — RESULT",36,60,"bold 26px Courier New","#2d5b86");
+[["Student",`${i.last}, ${i.first} ${i.mi}.`],["Section",i.section],["Email",i.email],["Topic",c.t.t],["Attempt",`${c.n} of ${MAX}`],["Score",`${c.score} / 10`],["Status",c.status],["Started",stamp(c.start)],["Finished",stamp(c.end)],["Ranking",i.ranking=="YES"?"Joined":"Not joined"]].forEach((r,k)=>{tx(r[0]+":",36,100+k*30,"bold 17px Segoe UI","#b5532a");tx(r[1],170,100+k*30,"17px Segoe UI")});
+tx("ANSWER KEY  (your answer → correct answer)",36,430,"bold 18px Courier New","#2d5b86");
+c.items.forEach((q,k)=>{const ok=c.ans[k]==q.a;tx(`${k+1}. Yours: ${c.ans[k]<0?"—":L[c.ans[k]]}   Key: ${L[q.a]}. ${q.o[q.a]}`.slice(0,95),36,462+k*52,"15px Segoe UI",ok?"#1b6e3a":"#b3261e");tx(ok?"✔ correct":"✘ wrong",830,462+k*52,"15px Segoe UI",ok?"#1b6e3a":"#b3261e");tx(q.q.slice(0,105),36,482+k*52,"12px Segoe UI","#6b5f45")});
+x.save();x.translate(W/2,H/2);x.rotate(-.5);x.font="bold 64px Courier New";x.fillStyle="rgba(45,91,134,.13)";x.textAlign="center";x.fillText("RAYMOND D. ENTAL",0,0);x.fillText("RAYMOND D. ENTAL",0,-300);x.fillText("RAYMOND D. ENTAL",0,300);x.restore();
+IMG=cv.toDataURL("image/png");$('rimg').src=IMG;dl()}
+function dl(){const a=document.createElement("a");a.href=IMG;a.download=`Result_${S.info.last}_${S.cur.t.id}_Attempt${S.cur.n}.png`;document.body.appendChild(a);a.click();a.remove()}
+
+/* ---------- leaderboard & admin ---------- */
+function showBoard(){show('s-board');const b=$('bb');if(!SCRIPT_URL){b.innerHTML="<p class='err'>Leaderboard not connected yet (Apps Script URL not set).</p>";return}b.textContent="Loading…";
+fetch(SCRIPT_URL+"?action=rank").then(r=>r.json()).then(j=>{b.innerHTML=`<h2>Section Ranking — Top Section wins ₱500</h2><table><tr><th>#</th><th>Section</th><th>Avg top-5 total</th><th>Joined</th></tr>${(j.sections||[]).map((s,k)=>`<tr><td>${k+1}</td><td>${esc(s.section)}${k==0&&s.ok?" 🥇":""}</td><td>${s.avg}</td><td>${s.n}${s.ok?"":" (needs 3)"}</td></tr>`).join("")||"<tr><td colspan=4>No data yet</td></tr>"}</table>
+<h2 style="margin-top:14px">Top 10 Students</h2><table><tr><th>#</th><th>Name</th><th>Sec</th><th>Total /120</th><th>Prize</th></tr>${(j.students||[]).map((s,k)=>`<tr><td>${k+1}</td><td>${esc(s.name)}</td><td>${esc(s.section)}</td><td>${s.total}</td><td>${PRIZE[k]}</td></tr>`).join("")||"<tr><td colspan=5>No data yet</td></tr>"}</table>`}).catch(()=>b.innerHTML="<p class='err'>Could not load the leaderboard.</p>")}
+function adminLogin(){if(prompt("Admin password:")===ADMIN_PW){S.admin=true;S.info={last:"ENTAL",first:"RAYMOND",mi:"D",section:"ADMIN",email:"admin@local",ranking:"NO"};show('s-menu')}else alert("Wrong password.")}
+</script></body></html>
